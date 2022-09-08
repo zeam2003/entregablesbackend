@@ -1,105 +1,57 @@
-const fs = require('fs');
-const nombreArchivo ='./data.productos.js';
+const express = require('express');
+const {Router} = express;
 
-class Contenedor {
-    constructor(nombreArchivo) {
-        this.nombreArchivo = nombreArchivo;
-    }
+const db = require('./productos.controller.js');
+const router = Router();
 
-    // Guardamos el producto
-    async save(producto) {
-        try {
-            const data = await fs.promises.readFile(this.nombreArchivo, "utf-8");
-            const productos = JSON.parse(data);
-            const id = productos.length + 1;
-            producto.id = id;
-            productos.push(producto);
-            const productoExport = JSON.stringify(productos);
-            await fs.promises.writeFile(this.nombreArchivo, productoExport);
-            return id;
-        } catch (error) {
-            console.error('se presentó el siguiente inconveniente al intentar guardar: ', error);
-        }
-       
-    }
 
-    // Obtenemos un producto por ID
-    async getById(id) {
-        try {
-            const data = await fs.promises.readFile(this.nombreArchivo, "utf-8");
-            const productos = JSON.parse(data);
-            const producto = productos.find((producto) => producto.id == id);
-            if(producto) {
-                return producto;
-            } else {
-                return "Producto no encontrado";
-            } 
-        } catch (error) {
-            return `Se produjo el siguiente inconveniente: ${error}`;
-        }
-        
-    }
 
-    // Obtenemos todos los productos
-    async getAll() {
-        try {
-            const data = await fs.promises.readFile(this.nombreArchivo, "utf-8");
-            const productos = JSON.parse(data);
-            if(productos.length === 0 ) {
-                return `No hay productos aún`;
-            } else {
-                return productos;
-            }
-        } catch (error) {
-            return `Se produjo el siguiente inconveniente: ${error}`;
-        }
-        
-    }
+const localDB = new db();
+// console.log(localDB);
+/* router.get('/', (req, res) => {
+    res.send({error: false});
+}); */
 
-    // Borramos por ID
-    async deleteById(id) {
-        try {
-            const data = await fs.promises.readFile(this.nombreArchivo, "utf-8");
-            let productos = JSON.parse(data);
-            const producto = productos.find((producto) => producto.id == id);
-            if(producto){
-                productos = productos.filter( producto => producto.id !== id);
-                const productDelete = JSON.stringify(productos);
-                await fs.promises.writeFile(this.nombreArchivo, productDelete);
-                return 'Se ha eliminado el producto';
-            } else {
-                return 'Ese producto no se encuentra registrado';
-            }
-            
-        } catch (error) {
-            return `Se produjo el siguiente inconveniente: ${error}`;
-        }
-        
-    }
+router.post('/', async (req, res) => {
+    console.log(req.body);
+    //let recibido = req.body;
 
-    // Borramos todo
-    async deleteAll() {
-        try {
-            const data = await fs.promises.readFile(this.nombreArchivo, "utf-8");
-            let productos = JSON.parse(data);
-            if(productos.length == 0) {
-                return `No hay productos para eliminar`;
-            } else {
-                productos = [];
-                const productDelete = JSON.stringify(productos);
-                await fs.promises.writeFile(this.nombreArchivo, productDelete);
-                return 'Se han eliminado los productos';
-            }
-        } catch (error) {
-            return `Se produjo el siguiente inconveniente: ${error}`;
-        }
-        
-    }
+    let recibido = {title, price, thumbail} = req.body;
+    creado = await localDB.save(recibido);
+    //res.send({"producto": {title, price, thumbail}});
+    res.send(creado);
+});
 
-}
+router.get('/', async (req,res) => {
+    const data = await localDB.getAll();
+    res.send(data);
+});
 
-async function inicio() {
-    const contenido = new Contenedor('.data/productos.json');
-}
+router.get('/:id', async (req,res) => {
+    const { id } = req.params;
+    const data = await localDB.getById(id);
+    res.send(data);
+});
 
-module.exports = Contenedor;
+router.get('/productRandom', async (req, res) => {
+    const data = await localDB.getAll();
+    let ran = Math.random()*data.length | 0;
+    res.send(data[ran]); 
+ 
+});
+
+router.put('/:id', async (req,res) => {
+    const { id } = req.params;
+    const cuerpo = { title: req.body.title, price : req.body.price, thumbail : req.body.thumbail } ;
+    //console.log(cuerpo);
+    const data = await localDB.updateById(id, cuerpo);
+    res.send(data);
+});
+
+router.delete('/:id', async (req,res) => {
+    const { id } = req.params;
+    const data = await localDB.deleteById(id);
+    res.send(data);
+});
+
+module.exports = router;

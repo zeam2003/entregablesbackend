@@ -1,27 +1,15 @@
 const express = require('express');
-const db = require('./productos.js');
-
 const app = express();
+const bodyParser = require('body-parser');
+const productosRouter = require('./productos');
 
-const localDB = new db('./data/productos.json');
-// console.log(localDB);
-app.get('/', (req, res) => {
-    res.send({error: false});
-});
+app.use(express.json());
+app.use(bodyParser.urlencoded({extended: true}));
+app.use(bodyParser.json());
 
-app.get('/productos', async (req,res) => {
+app.use('/api/productos', productosRouter);
 
-    const data = await localDB.getAll();
-    res.send(data);
-         
-});
+app.use(express.static(__dirname + '/public'));
 
-app.get('/productRandom', async (req, res) => {
-    const data = await localDB.getAll();
-    let ran = Math.random()*data.length | 0;
-   
-    res.send(data[ran]); 
- 
-});
 
 app.listen(8080, () => { console.log('Servidor Activo'); });
