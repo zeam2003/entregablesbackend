@@ -19,7 +19,9 @@ router.post('/', async (req, res) => {
     let recibido = {title, price, thumbail} = req.body;
     creado = await localDB.save(recibido);
     //res.send({"producto": {title, price, thumbail}});
-    res.send(creado);
+    
+    res.redirect('/registro');
+    //res.send(creado);
 });
 
 router.get('/', async (req,res) => {

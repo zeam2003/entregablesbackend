@@ -2,6 +2,24 @@ const fs = require('fs');
 const nombreArchivo ='./data.productos.js';
 let productosAlmacenados =[];
 
+/* let productosAlmacenados =[
+    {
+        'title' : 'Reloj',
+        'price': 1500,
+        'thumbail': 'https://cdn3.iconfinder.com/data/icons/education-209/64/clock-stopwatch-timer-time-512.png'
+    },
+    {
+        'title' : 'Calculadora',
+        'price': 2730,
+        'thumbail': 'https://cdn3.iconfinder.com/data/icons/education-209/64/calculator-math-tool-school-256.png'
+    },
+    {
+        'title' : 'Mochila',
+        'price': 1500,
+        'thumbail': 'https://cdn3.iconfinder.com/data/icons/education-209/64/bag-pack-container-school-512.png'
+    },
+];
+ */
 class Contenedor {
     constructor(nombreArchivo) {
         this.nombreArchivo = nombreArchivo;
@@ -41,7 +59,8 @@ class Contenedor {
     async getAll() {
         try {
             if(productosAlmacenados.length === 0 ) {
-                return `No hay productos aún`;
+                // return `No hay productos aún`;
+                return productosAlmacenados;
             } else {
                 return productosAlmacenados;
             }
