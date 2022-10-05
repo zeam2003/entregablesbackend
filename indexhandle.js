@@ -27,8 +27,8 @@ const localDB = new controlador();
 //app.use('views', './views/');
  async function obtener() {
     try {
-       const data = await fs.promises.readFile('./data/productos.json', 'utf-8')
-       Productos = JSON.parse(data)
+       const data = await fs.promises.readFile('./data/productos.json', 'utf-8');
+       Productos = JSON.parse(data);
        //return console.log(data);
     } catch (error) {
         console.log('error', error);
@@ -68,7 +68,7 @@ app.get('/listado', (req, res) => {
    // const data = localDB.getAll();
    // console.log(data);
     obtener();
-    console.log('esto tengo', Productos.length)
+    console.log('esto tengo', Productos.length);
     res.render('main', {layout: 'productos', Productos});
     //res.render('main', {layout: 'productos', data});
 });

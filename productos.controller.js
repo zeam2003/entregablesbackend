@@ -1,5 +1,5 @@
 const fs = require('fs');
-const nombreArchivo ='./data.productos.js';
+const nombreArchivo ='./data/productos.json';
 let productosAlmacenados =[];
 
 /* let productosAlmacenados =[
@@ -22,8 +22,19 @@ let productosAlmacenados =[];
  */
 class Contenedor {
     constructor(nombreArchivo) {
+        this.obtener();
         this.nombreArchivo = nombreArchivo;
         this.productosAlmacenados = productosAlmacenados;
+        
+    }
+
+    async obtener() {
+        try {
+           const data = await fs.promises.readFile(nombreArchivo, 'utf-8');
+           productosAlmacenados = JSON.parse(data);
+        } catch (error) {
+            console.log('error', error);
+        }
     }
 
     // Guardamos el producto
@@ -42,6 +53,9 @@ class Contenedor {
 
     // Obtenemos un producto por ID
     async getById(id) {
+        if (id == ''){
+            console.log(id);
+        }
         try {
             const producto = productosAlmacenados.find((producto) => producto.id == id);
             if(producto) {
@@ -57,9 +71,9 @@ class Contenedor {
 
     // Obtenemos todos los productos
     async getAll() {
+        
         try {
             if(productosAlmacenados.length === 0 ) {
-                // return `No hay productos aún`;
                 return productosAlmacenados;
             } else {
                 return productosAlmacenados;
@@ -67,6 +81,11 @@ class Contenedor {
         } catch (error) {
             return `Se produjo el siguiente inconveniente: ${error}`;
         }
+    }
+
+    // Busqueda general
+    async search(criteria) {
+       console.log(criteria);
     }
 
     // Actualizar por ID

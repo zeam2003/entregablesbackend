@@ -1,10 +1,7 @@
 const express = require('express');
 const {Router} = express;
-
-const db = require('./productos.controller.js');
+const db = require('./carritos.controller.js');
 const router = Router();
-
-
 
 const localDB = new db();
 
@@ -25,8 +22,8 @@ router.get('/', async (req,res) => {
     res.send(data);
 }); 
 
-
-router.get('/:id', async (req,res) => {
+// Obtiene por params el ide del carrito, lo busca y muestra
+router.get('/:id/productos', async (req,res) => {
     const { id } = req.params;
     const data = await localDB.getById(id);
     res.send(data);
@@ -37,6 +34,13 @@ router.get('/productRandom', async (req, res) => {
     let ran = Math.random()*data.length | 0;
     res.send(data[ran]); 
  
+});
+
+router.post('/:id/productos', async (req,res) => {
+    const { id } = req.params;
+    const cuerpo = req.body ;
+    const data = await localDB.updateById(id, cuerpo);
+    res.send(data);
 });
 
 router.put('/:id', async (req,res) => {
@@ -50,6 +54,14 @@ router.put('/:id', async (req,res) => {
 router.delete('/:id', async (req,res) => {
     const { id } = req.params;
     const data = await localDB.deleteById(id);
+    res.send(data);
+});
+
+router.delete('/:id/productos/:id_prod', async (req,res) => {
+    const id  = req.params.id;
+    const cartId = req.params.id_prod;
+    
+    const data = await localDB.deleteCartById(id, cartId);
     res.send(data);
 });
 
